@@ -48,25 +48,25 @@ foo.approx <- km(design = X, response = Y, upper = rep(10, 2),
 
 ### Optimiztion
 
-```{r, echo=FALSE}
-set.seed(1)
+```{r, echo=T}
+set.seed(12)
 
-nsteps <- 30
+nsteps <- 3
 
-res.nsteps <- EGO.nsteps(model = foo.approx, fun = foo,
-                         nsteps = nsteps, lower = rep(0, 2), upper = rep(1, 2),
-                         parinit = rep(0.5, 2),
-                         control = list(pop.size = 50,
-                                        max.generations = 20,
-                                        wait.generations = 5, BFGSburnin = 5),
-                         kmcontrol = NULL)
+res.nsteps <- qEGO.nsteps(model = foo.approx, fun = foo,
+                          npoints = 10, # batch size
+                          nsteps = nsteps, lower = rep(0, 2), upper = rep(1, 2),
+                          # parinit = rep(0.5, 2),
+                          optimcontrol = NULL)
 
-plot(res.nsteps$value, type = "b", xlab = "Iteration", ylab = "best value")
+# plot(res.nsteps$value, type = "b", xlab = "Iteration", ylab = "best value")
 ```
 
 ```{r}
 ## best solution 
-res.nsteps$par[which.min(res.nsteps$value), ]
+print(res.nsteps$par)
+print(res.nsteps$value)
+plot(c(1:nsteps),res.nsteps$history,xlab='step',ylab='Current known minimum')
 ```
 
 
