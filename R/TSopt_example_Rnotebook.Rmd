@@ -1,8 +1,6 @@
 ---
 title: "BO-EMEWS example"
-output:
-  html_document:
-    df_print: paged
+output: html_notebook
 ---
 
 ```{r}
