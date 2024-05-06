@@ -18,5 +18,5 @@ pg_bin_path: ~/miniconda3/envs/emews-py3.10/bin
 # e.g., /home/nick/anaconda3/envs/swift-t-r-py3.9/bin/python3
 python_path: /home/nick/miniconda3/envs/emews-py3.10/bin/python3
 
-n_steps: 10
+n_steps: 4
 n_points: 10
