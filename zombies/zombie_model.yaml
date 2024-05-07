@@ -1,5 +1,5 @@
 random.seed: 42
-stop.at: 25.0
+stop.at: 50.0
 human.count: 4000
 zombie.count: 200
 world.width: 200
