@@ -36,10 +36,9 @@ string update_params_t = """
 import json
 
 counts_file = '%s'
-random_seed = %d
 steps = json.loads('%s')
 params = {'human_step_size': steps[1], 'zombie_step_size': steps[0],
-          'counts_file': counts_file, 'random.seed': random_seed}
+          'counts_file': counts_file, 'random.seed': int(steps[2])}
 param_str = json.dumps(params)
 """;
 
@@ -68,29 +67,27 @@ app (file out, file err) run_task_app(file shfile, string task_payload, string i
     "bash" shfile task_payload emews_root instance_dir @stdout=out @stderr=err;
 }
 
-(float result) run_obj(string task_payload, int trial, string instance_dir, string instance_id) {
+(float result) run_obj(string task_payload, string instance_dir, string instance_id) {
     file out <instance_dir + "/" + instance_id+"_out.txt">;
     file err <instance_dir + "/" + instance_id+"_err.txt">;
     string output_file = "%s/output_%s.csv" % (instance_dir, instance_id);
-    string code = update_params_t % (output_file, trial, task_payload);
+    string code = update_params_t % (output_file, task_payload);
     string updated_payload = python_persist(code, "param_str");
     (out,err) = run_task_app(model_sh, updated_payload, instance_dir) =>
     result = get_result(output_file);
 }
 
 (string obj_result) run_task(int task_id, string task_payload) {
-    float results[];
+    float result;
 
     string instance = "%s/instance_%i/" % (turbine_output, task_id);
+    
     mkdir(instance) => {
-        foreach i in [0:n_trials-1:1] {
-            int trial = i + 1;
-            string instance_id = "%i_%i" % (task_id, trial);
-            results[i] = run_obj(task_payload, trial, instance, instance_id);
-        }
+      string instance_id = "%i" % (task_id);
+      result = run_obj(task_payload, instance, instance_id);
     }
 
-    obj_result = float2string(avg(results)); // =>
+    obj_result = float2string(result); // =>
     // TODO: delete the ";" above, uncomment the ""=>"" above and 
     // and the rm_dir below to delete the instance directory if
     // it is not needed after the result have been computed.
