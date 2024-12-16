@@ -14,9 +14,7 @@ combinations for conducting new simulations. The parameters we want to explore a
 Setup
 ---- 
 
-After cloning this repository, the following setup is required to run these examples:
-
-Install EMEWS on your machine following the [quickstart instructions](https://jozik.github.io/emews_next_gen_tutorial_tests/#quickstart).
+After cloning this repository, the following setup is required to run these examples. More information on this setup can be found in the EMEWS tutorial [quickstart instructions](https://jozik.github.io/emews_next_gen_tutorial_tests/#quickstart).
 
 ### 1. Install Conda
 
