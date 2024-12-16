@@ -16,32 +16,47 @@ Setup
 
 After cloning this repository, the following setup is required to run these examples:
 
-1. Install EMEWS on your machine following the [quickstart instructions](https://jozik.github.io/emews_next_gen_tutorial_tests/#quickstart).
-2. Point line 19 of `scripts/run_zombies.sh` to the location of the Python environment. 
+Install EMEWS on your machine following the [quickstart instructions](https://jozik.github.io/emews_next_gen_tutorial_tests/#quickstart).
 
-2. Install [Repast4Py](https://repast.github.io/repast4py.site/index.html) in a local Python environment (virutal or otherwise) and point line 19 of `scripts/run_zombies.sh` to this environment.
-3. Activate the 
+### 1. Install Conda
 
+The EMEWS binary install is a conda environment, and requires a conda installation as a prerequisite. Please install [miniconda](https://docs.anaconda.com/free/miniconda/miniconda-install), [miniforge](https://conda-forge.org/miniforge), or [anaconda](ttps://www.anaconda.com/download), or miniconda if you do not have an existing conda installation. 
 
+### 2. Download the installer files
 
+With conda activated in your terminal, download the installer files as follows:
 
+```
+$ curl -L -O https://raw.githubusercontent.com/jozik/emews_next_gen_tutorial_tests/main/code/install/install_emews.sh
+$ curl -L -O https://raw.githubusercontent.com/jozik/emews_next_gen_tutorial_tests/main/code/install/install_pkgs.R
+$ curl -L -O https://raw.githubusercontent.com/jozik/emews_next_gen_tutorial_tests/main/code/install/install_eq_sql.R
+```
+### 3. Run the installer
 
+The install script, install_emews.sh, takes two arguments:
 
+```
+$ bash install_emews.sh <python-version> <database-directory>
+```
 
+You can use Python version of 3.8, 3.9, 3.10, or 3.11.  The EMEWS DB database directory must be a folder that does NOT already exist. For example,
 
+```
+$ bash install_emews.sh 3.11 ~/Documents/db/emews_db
+```
 
+will install the EMEWS environment with Python 3.11 and create the EMEWS DB database in the ~/Documents/db/emews_db directory.
 
+The install will take a few minutes to download and install the necessary components, reporting its progress as each step completes. A detailed log of the installation can be found in emews_install.log in the same directory where the install script is run. The installer will create a conda environment named emews-pyX.XX where X.XX is the Python version provide on the command line, i.e., bash install_emews.sh install_emews.sh 3.11 ~/Documents/db/emews_db creates a conda environment named emews-py3.11. The environment can found in the envs directory of your conda installation.
 
-References
------------
-Collier, N. and J. Ozik. 2022. “Distributed Agent-Based Simulation with Repast4Py”. In 2022 Winter Simulation Conference (WSC), 192–206 https://doi.org/10.1109/WSC57314.2022.10015389.
+### 4. Setup conda environment
+Once installed, activate your emews conda environment (e.g., `conda activate emews-pyX.XX`) in your terminal. Within this environment, install the Python packages required to run the analysis:
 
-Thompson, W. R. 1933. “On the Likelihood that One Unknown Probability Exceeds Another in View of the Evidence of Two
-Samples”. Biometrika 25(3/4):285 https://doi.org/10.2307/2332286.
+```pip install -r requirements.txt```
 
-Thompson, W. R. 1935. “On the Theory of Apportionment”. American Journal of Mathematics 57(2):450 https://doi.org/10.
-2307/2371219.
-Ushey, K., J. Allaire, an
+#### 5. Run example in Python or R 
+You can now run the BO routine for the Zombies model with both Python and R. Please see respective folders for further intstructions on environment-specific setup.
+
 
 EMEWS project template
 -----------------------
@@ -76,3 +91,13 @@ The directories are intended to contain the following:
  * `scripts` - any necessary scripts (e.g. scripts to launch a model), excluding
     scripts used to run the workflow.
  * `swift` - swift code
+
+References
+-----------
+Collier, N. and J. Ozik. 2022. “Distributed Agent-Based Simulation with Repast4Py”. In 2022 Winter Simulation Conference (WSC), 192–206 https://doi.org/10.1109/WSC57314.2022.10015389.
+
+Thompson, W. R. 1933. “On the Likelihood that One Unknown Probability Exceeds Another in View of the Evidence of Two
+Samples”. Biometrika 25(3/4):285 https://doi.org/10.2307/2332286.
+
+Thompson, W. R. 1935. “On the Theory of Apportionment”. American Journal of Mathematics 57(2):450 https://doi.org/10.
+2307/2371219.

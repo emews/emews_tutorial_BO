@@ -21,7 +21,7 @@ def to_native(x, lb=np.array([0.1, 1]), ub=np.array([1, 3])):
 
 def generate_inputs(Xgrid, ids, id_counter, seeds, lb=np.array([0.1, 1]), ub=np.array([1, 3])):
     """
-    Generate inputs in required format for EMEWS DB
+    Generate inputs in required format for EMEWS
     """
     Xs = []
     for ix, cnt in ids.items():
