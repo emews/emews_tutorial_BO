@@ -1,11 +1,12 @@
 
 
-```{r}
+```{r message=FALSE}
 library(hetGP)
 library(gridExtra)
 library(jsonlite)
 library(reticulate)
 library(EQ.SQL)
+library(grid)
 source('~/argonne/projects/data_assimilation/emews_tutorial_BO/R/helpers.R')
 ```
 
@@ -17,7 +18,7 @@ This notebook contains a complete worked example of finding the optimal paramete
 
 Our goal is to find the combination of **zombie step size** and **human step size** that results in the highest human survival rate in the simulation. For this design, we consider **30 human step sizes between 1 and 3** and **30 zombie step sizes between 0.1 and 1** (for 900 possible parameter combinations). We select 5 parameter combinations to initialize the BO procedure, shown below. 
 
-```{r}
+```{r, fig.width=4, fig.height=4.5}
 # Set up unit grid (the BO procedure needs input values between 0 and 1)
 xx <- seq(0, 1, length.out = 30)
 Xgrid <- expand.grid(xx, xx)
@@ -39,6 +40,7 @@ plot(Xgrid_native[,1], Xgrid_native[,2],
 
 points(Xgrid_native[init_ids,1], Xgrid_native[init_ids,2], pch = 16, cex = 1)
 ```
+
 
 ### Setup EMEWS DB
 Next, we start the EMEWS database, local task queues, and worker pools. 
@@ -143,24 +145,40 @@ Y <- (Y - ymean) / ystd
 ```
 
 
-#### Fit GP on initial design
+### Fit GP on initial design
 To begin the optimization process, we begin by fitting a GP model to these initial points. The parameters we've specified in the model were selected after some intial experimentation. After fitting the model, we predict the mean surface and variance over the entire grid of potential parameters and plot them. We are storing the plots in a list to display them nicely together at the end.
 
-```{r}
+```{r, fig.width=9, fig.height=4.5}
 gp <- mleHetGP(X, Y, noiseControl = list(g_bounds = c(1e-6, .1)), upper=c(100,100))
-plots <- list()
 
-p <- plot_gp_mean(gp, Xgrid, X, ymean, ystd, title="Initial design")
-plots[[1]] <- p
-p
+Xnative <- to_native(X)
+Ynative <- exp(Y*ystd + ymean)
+best_ix <- which.max(Ynative)
+
+best_msg = sprintf(
+    "Current best: %d humans survive at zombie_step_size = %.2f, human_step_size = %.2f",
+    round(Ynative[best_ix]),
+    round(Xnative[best_ix, 1], 2),
+    Xnative[best_ix, 2]
+    )
+plots <- plot_gp(gp, Xgrid, X, ymean, ystd, title="Initial design")
+
+grid.arrange(
+  grobs = plots,
+  ncol = 2,
+  top = textGrob("Initial Design", gp = gpar(fontsize = 16, fontface = "bold")),
+  bottom=best_msg
+)
 ```
+
+
 We see that the predicted surface shows more human survivors toward the origin, but also much higher variance. The Thompson Sampling (TS) optimization procedure draws samples from a multivariate normal distrubtion with mean and covariance set to the values from the GP predictions. We find the location of the maximum value for each of these samples and run the simulation at these points. 
 
-#### First TS iteration
+### First TS iteration
 
 To demonstrate, we perform the TS after the initial design, which selects the parameters shown below. 
 
-```{r}
+```{r, fig.width=4, fig.height=4.5}
 # Thompson sample to find the next points to evaluate
 best_ids <- TS_npoints(gp, min(nts, budget), Xgrid)
 
@@ -175,13 +193,15 @@ plot(Xgrid_native[,1], Xgrid_native[,2],
      pch = 16, cex = 0.5,
      xlab = "Zombie Step Size",
      ylab = "Human Step Size",
-     main = "Initial Design")
+     main = "First TS Iteration")
 
 points(Xnative_new[,1], Xnative_new[,2], pch = 16, cex = 1)
 ```
+
+
 Next, we evaluate the Zombies model for these new parameters by submitting them to the EMEWS task queue and update the budget. We then refit the GP with all locations that have currently been evaluated and plot the updated predicted surface. Darker circles indicate that a location has been selected multiple times.
 
-```{r}
+```{r, fig.width=9, fig.height=4.5}
 new_inputs = generate_inputs(Xgrid, best_ids, id_counter, seeds)
 Xnew <- new_inputs$X
 Xnative_new <- new_inputs$Xnative
@@ -212,15 +232,33 @@ Ynew = log(Ynew)
 Ynew = (Ynew - ymean)/ystd
 
 X <- rbind(X, Xnew)
+Xnative <- to_native(X)
 Y <- c(Y, Ynew)
+Ynative <- exp(Y*ystd + ymean)
+best_ix <- which.max(Ynative)
+
+best_msg = sprintf(
+    "Current best: %d humans survive at zombie_step_size = %.2f, human_step_size = %.2f",
+    round(Ynative[best_ix]),
+    round(Xnative[best_ix, 1], 2),
+    Xnative[best_ix, 2]
+    )
   
 gp <- mleHetGP(X, Y, noiseControl = list(g_bounds = c(1e-6, .1)), upper=c(100,100))
-p <- plot_gp_mean(gp, Xgrid, X, ymean, ystd, title=paste("Iteration", 2))
-plots[[2]] <- p
+plots <- plot_gp(gp, Xgrid, X, ymean, ystd, title=paste("Iteration", 1))
+grid.arrange(
+  grobs = plots,
+  ncol = 2,
+  top = textGrob("Iteration 1", gp = gpar(fontsize = 16, fontface = "bold")),
+  bottom=best_msg
+)
 ```
 
+### Iterate until budget is exhausted
 
-```{r}
+We repeat these steps until the computational budget has been fully expended, and track the optimal parameters after each iteration.
+
+```{r, fig.width=9, fig.height=4.5}
 # exhaust budget
 j <- 3
 while (budget > 0){
@@ -256,17 +294,33 @@ while (budget > 0){
   Ynew = (Ynew - ymean)/ystd
   
   X <- rbind(X, Xnew)
+  Xnative <- to_native(X)
   Y <- c(Y, Ynew)
+  Ynative <- exp(Y*ystd + ymean)
+  best_ix <- which.max(Ynative)
   
+  best_msg = sprintf(
+    "Current best: %d humans survive at zombie_step_size = %.2f, human_step_size = %.2f",
+    round(Ynative[best_ix]),
+    round(Xnative[best_ix, 1], 2),
+    Xnative[best_ix, 2]
+    )
+
   gp <- mleHetGP(X, Y, noiseControl = list(g_bounds = c(1e-6, .1)), upper=c(100,100))
-  p <- plot_gp_mean(gp, Xgrid, X, ymean, ystd, title=paste("Iteration", j-1))
-  plots[[j]] <- p
+  plots = plot_gp(gp, Xgrid, X, ymean, ystd)
+  grid.arrange(
+    grobs = plots,
+    ncol = 2,
+    top = textGrob(paste("Iteration", j-1), gp = gpar(fontsize = 16, fontface = "bold")),
+    bottom = best_msg
+  )
   j <- j+1
 }
-
-do.call(grid.arrange, c(plots, ncol = 5))
 ```
 
+### Shut EMEWS down
+
+Finally, we close the task queue and worker pools and shut down the EMEWS DB.
 
 ```{r}
 if (!is.null(task_queue)) task_queue$close()
