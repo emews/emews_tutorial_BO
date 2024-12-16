@@ -53,7 +53,7 @@ Once installed, activate your emews conda environment (e.g., `conda activate eme
 ```pip install -r requirements.txt```
 
 #### 5. Run example in Python or R 
-You can now run the BO routine for the Zombies model with both Python and R. Please see respective folders for further intstructions on environment-specific setup.
+You can now run the BO routine for the Zombies model with both [Python](https://github.com/emews/emews_tutorial_BO/tree/master/python) and [R](https://github.com/emews/emews_tutorial_BO/tree/master/R). Please see respective folders for further intstructions on running the examples.
 
 
 EMEWS project template
