@@ -1,18 +1,19 @@
 # TODO: Edit DB properties if necessary
-db_path: /home/nick/Documents/db/wsc_tutorial
+db_path:  ~/Documents/db/emews_db
 db_host: localhost
 db_user: eqsql_user
 db_name: EQ_SQL
 # db_port can be empty for local run
-db_port: 
+db_port: 5432
 
 worker_pool_id: default
 task_type: 0
 
 pool_launch_script: ../swift/run_eqsql_worker_pool.sh
 pool_cfg_file: ../swift/cfgs/eqsql_worker_pool.cfg
+pg_bin_path: ~/miniconda3/envs/emews-py3.11/bin
 
 # TODO: add the path to a Python binary. This Python install
 # must include the eqsql package.
 # e.g., /home/nick/anaconda3/envs/swift-t-r-py3.9/bin/python3
-python_path: /home/nick/miniconda3/envs/emews-py3.10/bin/python3
+python_path: ~/miniconda3/envs/emews-py3.11/bin/python3

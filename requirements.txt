@@ -1,0 +1,10 @@
+jupyter
+numpy
+matplotlib
+seaborn
+scipy
+pandas
+pyyaml
+hetgpy
+mpi4py
+repast4py

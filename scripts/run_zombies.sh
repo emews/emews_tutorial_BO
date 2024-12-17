@@ -16,7 +16,7 @@ INSTANCE_DIRECTORY=$3
 cd $INSTANCE_DIRECTORY
 
 
-source /home/nick/.venv/r4py-py3.10/bin/activate
+#source /home/nick/.venv/r4py-py3.10/bin/activate
 PYTHON=$( which python3 )
 echo $PYTHON
 ZOMBIES_YAML=$EMEWS_ROOT/zombies/zombie_model.yaml
