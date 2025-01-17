@@ -7,7 +7,7 @@ library(jsonlite)
 library(reticulate)
 library(EQ.SQL)
 library(grid)
-source('~/argonne/projects/data_assimilation/emews_tutorial_BO/R/helpers.R')
+source('helpers.R')
 ```
 
 ## Bayesian Optimization of the Zombies model
