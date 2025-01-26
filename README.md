@@ -1,7 +1,7 @@
 Bayesion Optimization of the Zombies model with EMEWS
 -----------------------
 
-This repository contains worked examples of optimizing a simple simulation model using EMEWS with both Python and R. The Zombies demonstration model, [which is distributed with Repast4Py](https://repast.github.io/repast4py.site/guide/user_guide.html#_tutorial_3_the_zombies_model) (Collier and Ozik 2022), is an agent-baed model involving two agent types, Zombies and Humans. Zombies pursue Humans, seeking to infect them, and once a Human agent is infected it is transformed into a Zombie after an incubation period lasting a number of time steps. Each time step, each Zombie and Human examines their local Moore neighborhood and moves towards the location with the most Humans or fewest Zombies, respectively. Refer to [Collier and North, 2015](https://jozik.github.io/emews_next_gen_tutorial_tests/#_jzombie_repast_simulation) for more information on the Zombies model.
+This repository contains worked examples of optimizing a simple simulation model using EMEWS with both Python and R. It accompanies the "Distributed Model Exploration with EMEWS" tutorial paper (Collier et al. 2024). The Zombies demonstration model, [which is distributed with Repast4Py](https://repast.github.io/repast4py.site/guide/user_guide.html#_tutorial_3_the_zombies_model) (Collier and Ozik 2022), is an agent-baed model involving two agent types, Zombies and Humans. Zombies pursue Humans, seeking to infect them, and once a Human agent is infected it is transformed into a Zombie after an incubation period lasting a number of time steps. Each time step, each Zombie and Human examines their local Moore neighborhood and moves towards the location with the most Humans or fewest Zombies, respectively. Refer to [Collier and North, 2015](https://repast.github.io/docs/RepastJavaGettingStarted.pdf) and the relevant section [in the EMEWS tutorial](https://emews.org/emews-tutorial/#_jzombie_repast_simulation) for more information on the Zombies model.
 
 For this demonstration, we have introduced a varying movement step size for each of the agent types. The original model had Zombies move in fixed steps of length 0.25 (in units of the model space) and Humans in steps of length 0.5. The present model encapsulates these two values in two float type parameters, `zombie_step_size` and `human_step_size`. 
 
@@ -93,6 +93,8 @@ The directories are intended to contain the following:
 References
 -----------
 Collier, N. and J. Ozik. 2022. “Distributed Agent-Based Simulation with Repast4Py”. In 2022 Winter Simulation Conference (WSC), 192–206 https://doi.org/10.1109/WSC57314.2022.10015389.
+
+Collier, N., Wozniak, J.M., Fadikar, A., Stevens, A., and J. Ozik. 2024. "Distributed Model Exploration with EMEWS." In 2024 Winter Simulation Conference (WSC) (IEEE), pp. 72–86. https://doi.org/10.1109/WSC63780.2024.10838848.
 
 Thompson, W. R. 1933. “On the Likelihood that One Unknown Probability Exceeds Another in View of the Evidence of Two
 Samples”. Biometrika 25(3/4):285 https://doi.org/10.2307/2332286.
